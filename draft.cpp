@@ -1,17 +1,53 @@
 #include <iostream>
 #include <vector>
 #include <limits>
-
+#include <map>
 
 const int cityCount = 4;
 const int INVALID_VALUE = -1;
 const int MAX = std::numeric_limits<int>::max();
+std::map<std::pair<int, int>, int> edgeMap;
+
+const int distance[cityCount][cityCount] = {{0, 12, 30, 6},
+                                            {12, 0, 10, 7},
+                                            {30, 10, 0, 5},
+                                            {6, 7, 5, 0}};
+
+// TODO: init from a file
+void initEdgeMap(){
+
+    for(int i = 0; i < cityCount; i++) 
+    {
+        for (int j = i; j < cityCount; j++)
+        {
+            if (distance[i][j] == 0)
+            {
+                continue;
+            }
+
+            edgeMap[std::pair<int, int>(i, j)] = distance[i][j];
+            edgeMap[std::pair<int, int>(j, i)] = distance[i][j];
+
+        }
+    }
+}
+
+void printEdgeMap() {
+        printf("Edge map contents:\n");
+    // Loop over edges in edge_map
+    for(
+        std::map<std::pair<int, int>, int>::iterator it = edgeMap.begin();
+        it != edgeMap.end();
+        it++ )
+    {
+        printf("(%d,%d) %d\n",
+        it->first.first,
+        it->first.second,
+        it->second);
+    }
+}
 
 
-int distance[cityCount][cityCount] = {{0, 12, 30, 6},
-                                        {12, 0, 10, 7},
-                                        {30, 10, 0, 5},
-                                        {6, 17, 5, 0}};
 
 // int distance[cityCount][cityCount] = {{ 0, 5, 10, 15 },
 //                                         { 5, 0, 20, 30 },
@@ -80,18 +116,21 @@ int findShortestPath(int startingPoint) {
 
 int main()
 {
-    int shortestPath = MAX;
+    // int shortestPath = MAX;
 
-    // we can use for loop because we have to visit all cities
-    for (int i = 0; i < cityCount; i++) 
-    {
-        int startingPoint = i;
-        int currentPath = findShortestPath(startingPoint);
+    // // we can use for loop because we have to visit all cities
+    // for (int i = 0; i < cityCount; i++) 
+    // {
+    //     int startingPoint = i;
+    //     int currentPath = findShortestPath(startingPoint);
 
-        shortestPath = std::min(findShortestPath(startingPoint), shortestPath);
-    }
+    //     shortestPath = std::min(findShortestPath(startingPoint), shortestPath);
+    // }
 
-    std::cout << "Shortest path is " << shortestPath << "km long" << std::endl;
+    // std::cout << "Shortest path is " << shortestPath << "km long" << std::endl;
+
+    initEdgeMap();
+    printEdgeMap();
 
     return 0;
 }
