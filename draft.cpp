@@ -3,6 +3,22 @@
 #include <limits>
 #include <map>
 
+static uint64_t timer_nsec() {
+
+#if defined(CLOCK_MONOTONIC_RAW)
+	const clockid_t clockid = CLOCK_MONOTONIC_RAW;
+
+#else
+	const clockid_t clockid = CLOCK_MONOTONIC;
+
+#endif
+
+	timespec t;
+	clock_gettime(clockid, &t);
+
+	return t.tv_sec * 1000000000UL + t.tv_nsec;
+}
+
 const int cityCount = 4;
 const int INVALID_VALUE = -1;
 const int MAX = std::numeric_limits<int>::max();
@@ -113,22 +129,45 @@ int findShortestPath(int startingPoint) {
 }
 
 
+void getShortestPath() {
+    int shortestPath = MAX;
+
+    // we can use for loop because we have to visit all cities
+    for (int i = 0; i < cityCount; i++) 
+    {
+        int startingPoint = i;
+        int currentPath = findShortestPath(startingPoint);
+
+        shortestPath = std::min(findShortestPath(startingPoint), shortestPath);
+    }
+
+    // std::cout << "Shortest path is " << shortestPath << "km long" << std::endl;
+}
+
+
+void timerTest() {
+    const int testRepeat = 1 << 10;
+
+	uint64_t t0;
+	uint64_t t1;
+
+	// Time the search and take average of the runs
+	{
+		t0 = timer_nsec();
+		for (int test = 0; test < testRepeat; ++test) {
+            getShortestPath();
+		}
+		t1 = timer_nsec();
+	}
+
+    const double averageTime = (double(t1 - t0) * 1e-9) / testRepeat;
+	printf("time %f\n", averageTime);
+}
+
+
 
 int main()
 {
-    // int shortestPath = MAX;
-
-    // // we can use for loop because we have to visit all cities
-    // for (int i = 0; i < cityCount; i++) 
-    // {
-    //     int startingPoint = i;
-    //     int currentPath = findShortestPath(startingPoint);
-
-    //     shortestPath = std::min(findShortestPath(startingPoint), shortestPath);
-    // }
-
-    // std::cout << "Shortest path is " << shortestPath << "km long" << std::endl;
-
     initEdgeMap();
     printEdgeMap();
 
