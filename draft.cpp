@@ -19,9 +19,12 @@ static uint64_t timer_nsec() {
 	return t.tv_sec * 1000000000UL + t.tv_nsec;
 }
 
+
+// Constants used in the program
 const int cityCount = 4;
 const int INVALID_VALUE = -1;
 const int MAX = std::numeric_limits<int>::max();
+
 std::map<std::pair<int, int>, int> edgeMap;
 
 const int distance[cityCount][cityCount] = {{0, 12, 30, 6},
@@ -79,25 +82,26 @@ void printEdgeMap() {
 
 
 /* Find the smallest distance between a given city and his neighbours */
-int findMinDegreeIndex(int cityIndex, std::vector<bool> isNotVisited) 
+// FIXME: change key name to city or smth
+int findMinDegreeIndex(int key) 
 {
     int min = MAX;
     int minIndex = INVALID_VALUE;
 
-    for (int i = 0; i < cityCount; i++)
+    for(auto it : edgeMap) 
     {
-        if (!isNotVisited[i])
+        if (it.first.first != key)
         {
             continue;
         }
-        
-        // it doesn't matter if @city is first or second because the matrix is symmetric
-        if (min > distance[cityIndex][i] && distance[cityIndex][i] != 0)
+
+        if (it.second < min)
         {
-            min = distance[cityIndex][i];
-            minIndex = i;
+            min = it.second;
+            minIndex = it.first.second;
         }
     }
+
     return minIndex;
 }
 
@@ -113,7 +117,7 @@ int findShortestPath(int startingPoint) {
 
     for(int i = 0; i < cityCount; i++) 
     {
-        int nearestNeighbour = findMinDegreeIndex(currentPoint, isNotVisited);
+        int nearestNeighbour = findMinDegreeIndex(currentPoint);
 
         if (nearestNeighbour == INVALID_VALUE) {
             shortest += distance[startingPoint][currentPoint];
@@ -145,13 +149,13 @@ void getShortestPath() {
 }
 
 
+// Timer is only for Linux
 void timerTest() {
     const int testRepeat = 1 << 10;
 
 	uint64_t t0;
 	uint64_t t1;
 
-	// Time the search and take average of the runs
 	{
 		t0 = timer_nsec();
 		for (int test = 0; test < testRepeat; ++test) {
