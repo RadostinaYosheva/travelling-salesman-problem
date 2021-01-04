@@ -3,6 +3,7 @@
 #include <limits>
 #include <map>
 
+// Timer
 static uint64_t timer_nsec() {
 
 #if defined(CLOCK_MONOTONIC_RAW)
@@ -83,22 +84,29 @@ void printEdgeMap() {
 
 /* Find the smallest distance between a given city and his neighbours */
 // FIXME: change key name to city or smth
-int findMinDegreeIndex(int key) 
+int findMinDegreeIndex(int key, std::vector<bool> notVisited) 
 {
+    // TODO: Can we jump directly to key and then start iterate?
+    
     int min = MAX;
     int minIndex = INVALID_VALUE;
 
     for(auto it : edgeMap) 
     {
-        if (it.first.first != key)
+        int currentCity = it.first.first;
+
+        if (currentCity != key)
         {
             continue;
         }
 
-        if (it.second < min)
+        int neighbour = it.first.second;
+        int distance = it.second;
+
+        if (distance < min && notVisited[neighbour])
         {
-            min = it.second;
-            minIndex = it.first.second;
+            min = distance;
+            minIndex = neighbour;
         }
     }
 
@@ -110,29 +118,30 @@ int findMinDegreeIndex(int key)
 int findShortestPath(int startingPoint) {
 
     int currentPoint = startingPoint;
-    int shortest = 0;
+    int shortestPath = 0;
     std::vector<bool> isNotVisited(cityCount, true);
     isNotVisited[startingPoint] = false;
     
 
     for(int i = 0; i < cityCount; i++) 
     {
-        int nearestNeighbour = findMinDegreeIndex(currentPoint);
+        int nearestNeighbour = findMinDegreeIndex(currentPoint, isNotVisited);
 
         if (nearestNeighbour == INVALID_VALUE) {
-            shortest += distance[startingPoint][currentPoint];
+            shortestPath += edgeMap[{currentPoint, startingPoint}];    
             break;
         }
 
-        shortest += distance[currentPoint][nearestNeighbour];
+        shortestPath += edgeMap[{currentPoint, nearestNeighbour}];
         currentPoint = nearestNeighbour;
         isNotVisited[nearestNeighbour] = false;
     }
-    
-    return shortest;
+
+    return shortestPath;
 }
 
 
+// Gets the shortest path by changing the starting point
 void getShortestPath() {
     int shortestPath = MAX;
 
