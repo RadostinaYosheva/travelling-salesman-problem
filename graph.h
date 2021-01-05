@@ -1,3 +1,6 @@
+#ifndef _GRAPH_H
+#define _GRAPH_H
+
 #include <iostream>
 #include <vector>
 
@@ -19,3 +22,5 @@ class Graph {
     // TODO: second and third algorithms implementation
 
 };
+
+#endif
