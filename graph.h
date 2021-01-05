@@ -3,17 +3,19 @@
 
 class Graph {
     private:
-    const int size;
+    int size;
     std::vector<std::vector<int>> adjacencyMatrix;
-    // std::stack<int> path; To print the indeces of the path (??)
+    // TODO: std::stack<int> path; To print the indeces of the path (??)
 
+    void copyGraph(const Graph& other);
     int findShortestPath(int startVertex);                              /* (NN) Finding the shortest path from a given city */
     int findMinWeightIndex(int vertex, std::vector<bool> visited);      /* (NN) Find the smallest distance between a given city and his neighbours */
     
     public:
-    Graph() = default;
+    Graph();
     Graph(int _size, std::vector<std::vector<int>> _adjacencyMatrix);
+    Graph& operator= (const Graph& other);
     void nearestNeighbour();
-    // second and third algorithms implementation
+    // TODO: second and third algorithms implementation
 
 };

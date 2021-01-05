@@ -4,7 +4,22 @@
 const int INVALID_VALUE = -1;
 const int MAX = std::numeric_limits<int>::max();
 
+Graph::Graph() {}
+
 Graph::Graph(int _size, std::vector<std::vector<int>> _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
+
+Graph& Graph::operator=(const Graph& other) {
+    if (this != &other) {
+        copyGraph(other);
+    }
+
+    return *this;
+}
+
+void Graph::copyGraph(const Graph& other) {
+    size = other.size;
+    adjacencyMatrix = other.adjacencyMatrix;
+}
 
 void Graph::nearestNeighbour() {
     int shortestPath = MAX;
@@ -19,7 +34,7 @@ void Graph::nearestNeighbour() {
     }
 
     std::cout << "Shortest path is " << shortestPath << " km." << std::endl;
-    //  Print the path
+    //  TODO: Print the path (??)
 }
 
 int Graph::findShortestPath(int startVertex) {
