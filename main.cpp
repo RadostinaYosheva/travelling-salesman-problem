@@ -57,7 +57,7 @@ int main()
             return 0;
         }
 
-        g.nearestNeighbour();
+        g.nearestNeighbourAlgorithm();
     }
 
     return 0;
