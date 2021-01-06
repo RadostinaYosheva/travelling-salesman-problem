@@ -1,6 +1,7 @@
 #include "graph.h"
 #include <fstream>
 
+//  TODO: Find a place for this function (not in main)
 Graph init(std::string fileName)
 {
     int size;
@@ -25,6 +26,7 @@ Graph init(std::string fileName)
     return graph;
 }
 
+// TODO: Make an engine class and in main have one line "engine.run();"
 int main()
 {
     int choice = 0;
