@@ -29,13 +29,13 @@ void Graph::nearestNeighbourAlgorithm() {
 int Graph::findShortestPath(int startVertex) {
     int currentVertex = startVertex;
     int shortest = 0;
-    std::vector<bool> isNotVisited(size, true);
-    isNotVisited[startVertex] = false;
+    std::vector<bool> isVisited(size, false);
+    isVisited[startVertex] = true;
 
 
     for(int i = 0; i < size; i++) 
     {
-        int nearestNeighbour = findNextNeighbourIndex(currentVertex, isNotVisited);
+        int nearestNeighbour = findNextNeighbourIndex(currentVertex, isVisited);
 
         if (nearestNeighbour == INVALID_VALUE) {
             shortest += adjacencyMatrix[startVertex][currentVertex];
@@ -44,7 +44,7 @@ int Graph::findShortestPath(int startVertex) {
 
         shortest += adjacencyMatrix[currentVertex][nearestNeighbour];
         currentVertex = nearestNeighbour;
-        isNotVisited[nearestNeighbour] = false;
+        isVisited[nearestNeighbour] = true;
     }
 
     return shortest;
@@ -52,15 +52,14 @@ int Graph::findShortestPath(int startVertex) {
 
 
 /* (NN) Find the index of the nearest neighbour*/
-int Graph::findNextNeighbourIndex(int vertex, std::vector<bool> isNotVisited) 
+int Graph::findNextNeighbourIndex(int vertex, std::vector<bool> isVisited) 
 {
     int min = MAX;
     int minIndex = INVALID_VALUE;
 
     for (int i = 0; i < size; i++)
     {
-        // FIXME: change to isVisited
-        if (!isNotVisited[i] || i == vertex)
+        if (isVisited[i] || i == vertex)
         {
             continue;
         }
