@@ -76,19 +76,4 @@ int Graph::findNextNeighbourIndex(int vertex, std::vector<bool> isVisited)
 }
 
 
-Graph::Graph() {}
-
 Graph::Graph(int _size, std::vector<std::vector<int>> _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
-
-Graph& Graph::operator=(const Graph& other) {
-    if (this != &other) {
-        copyGraph(other);
-    }
-
-    return *this;
-}
-
-void Graph::copyGraph(const Graph& other) {
-    size = other.size;
-    adjacencyMatrix = other.adjacencyMatrix;
-}

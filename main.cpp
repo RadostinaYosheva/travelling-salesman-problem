@@ -27,7 +27,6 @@ Graph init(std::string fileName)
 
 int main()
 {
-    Graph g;
     int choice = 0;
 
     while (choice != 4) {
@@ -41,23 +40,32 @@ int main()
 
         switch (choice)
         {
-        case 1:
-            g = init("tests/test1.txt");
-            break;
+            case 1:
+            {
+                Graph g = init("tests/test1.txt");
+                g.nearestNeighbourAlgorithm();
+                break;
+            };
 
-        case 2:
-            g = init("tests/test2.txt");
-            break;
+            case 2:
+            {
+                Graph g = init("tests/test2.txt");
+                g.nearestNeighbourAlgorithm();
+                break;
+            };
 
-        case 3:
-            g = init("tests/test3.txt");
-            break;
+            case 3:
+            {
+                Graph g = init("tests/test3.txt");
+                g.nearestNeighbourAlgorithm();
+                break;
+            };
         
-        default:
-            return 0;
+            default:
+                return 0;
         }
 
-        g.nearestNeighbourAlgorithm();
+        
     }
 
     return 0;
