@@ -76,4 +76,84 @@ int Graph::findNextNeighbourIndex(int vertex, std::vector<bool> isVisited)
 }
 
 
+void Graph::updatePQ(priorityQ& oldPQ, std::vector<bool> isVisited)
+{
+    priorityQ newPQ;
+
+    while (!oldPQ.empty())
+    {
+        int neighbourIndex = oldPQ.top().second.first;
+
+        if (!isVisited[neighbourIndex])
+        {
+            newPQ.push(oldPQ.top());
+        }
+
+        oldPQ.pop();
+    }
+
+    oldPQ = newPQ;
+}
+
+void Graph::addToPQ(priorityQ& queue, int key, std::vector<bool> isVisited)
+{
+    for (int i = 0; i < size; i++)
+    {
+        if (isVisited[i])
+        {
+            continue;
+        }
+
+        int weight = adjacencyMatrix[key][i];
+        queue.push({weight, {key, i}});
+    }
+}
+
+void Graph::findMST()
+{
+    MSTMatrix.resize(size, std::vector<int>(size));
+    priorityQ queue;
+    std::vector<int> visitedIndices;
+    std::vector<bool> isVisited(size, false);
+    isVisited[0] = true;
+    visitedIndices.push_back(0);
+
+
+    for (int i = 0; i < size-1; i++) 
+    {
+        for(int v : visitedIndices)
+        {
+            addToPQ(queue, v, isVisited);
+        }
+
+        int keyCity = queue.top().second.first;
+        int nearest = queue.top().second.second;
+        int weight = queue.top().first;
+
+        MSTMatrix[keyCity][nearest] = weight;
+        MSTMatrix[nearest][keyCity] = weight;
+        isVisited[nearest] = true;
+        visitedIndices.push_back(nearest);
+
+        updatePQ(queue, isVisited);
+
+    }
+
+    std::cout << "MST Matrix:" << std::endl;
+    printMSTMatrix();
+
+}
+
+void Graph::printMSTMatrix()
+{
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            std::cout << MSTMatrix[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
 Graph::Graph(int _size, std::vector<std::vector<int>> _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
