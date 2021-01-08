@@ -31,6 +31,8 @@ class Graph {
     void addToPQ(priorityQ& queue, int key, std::vector<bool> isVisited); 
     void updatePQ(priorityQ& oldPQ, std::vector<bool> isVisited);
     void printMSTMatrix();
+    std::vector<int> findOddDegreeVertices();
+    void perfectMatching();
 
 };
 

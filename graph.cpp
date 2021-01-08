@@ -111,7 +111,7 @@ void Graph::addToPQ(priorityQ& queue, int key, std::vector<bool> isVisited)
 
 void Graph::findMST()
 {
-    MSTMatrix.resize(size, std::vector<int>(size));
+    MSTMatrix.resize(size);
     priorityQ queue;
     std::vector<int> visitedIndices;
     std::vector<bool> isVisited(size, false);
@@ -130,8 +130,8 @@ void Graph::findMST()
         int nearest = queue.top().second.second;
         int weight = queue.top().first;
 
-        MSTMatrix[keyCity][nearest] = weight;
-        MSTMatrix[nearest][keyCity] = weight;
+        MSTMatrix[keyCity].push_back(nearest);
+        MSTMatrix[nearest].push_back(keyCity);
         isVisited[nearest] = true;
         visitedIndices.push_back(nearest);
 
@@ -155,5 +155,39 @@ void Graph::printMSTMatrix()
         std::cout << std::endl;
     }
 }
+
+void Graph::perfectMatching() 
+{
+    int nearest = INVALID_VALUE;
+    int weight = MAX;
+    std::vector<int>::iterator tmp;
+
+    // Find nodes with odd degrees in T to get subgraph O
+    std::vector<int> odds = findOddDegreeVertices();
+
+    // for each odd node
+    while (!odds.empty()) {
+        int first = odds[0];
+        // std::vector<int>::iterator it;
+        weight = MAX;
+
+        for (int i = 1; i < odds.size(); i++) {
+            // if this node is closer than the current closest, update closest and length
+            if (adjacencyMatrix[first][i] < weight) {
+                weight = adjacencyMatrix[first][i];
+                nearest = i;
+            }
+        } 
+        
+        // two nodes are matched, end of list reached
+        // FIXME: what if the edge is already existing?
+        // FIXME: maybe a vector of sets?
+        MSTMatrix[first].push_back(nearest);
+        MSTMatrix[nearest].push_back(first);
+        odds.erase(odds.begin() + nearest);
+        odds.erase(odds.begin());
+    }
+}
+
 
 Graph::Graph(int _size, std::vector<std::vector<int>> _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
