@@ -148,44 +148,57 @@ void Graph::printMSTMatrix()
 {
     for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < size; j++)
-        {
-            std::cout << MSTMatrix[i][j] << " ";
-        }
-        std::cout << std::endl;
+        printf("Size of %d is %d\n", i, MSTMatrix[i].size());
     }
+}
+
+std::vector<int> Graph::findOddDegreeVertices()
+{
+    std::vector<int> odds;
+    
+    for(int i = 0; i < size; i++)
+    {
+        if (MSTMatrix[i].size() % 2 != 0)
+        {
+            odds.push_back(i);
+        }
+    }
+
+    return odds;
 }
 
 void Graph::perfectMatching() 
 {
     int nearest = INVALID_VALUE;
-    int weight = MAX;
-    std::vector<int>::iterator tmp;
+    int weight;
 
     // Find nodes with odd degrees in T to get subgraph O
     std::vector<int> odds = findOddDegreeVertices();
 
     // for each odd node
     while (!odds.empty()) {
+        int temp;
         int first = odds[0];
         // std::vector<int>::iterator it;
         weight = MAX;
 
         for (int i = 1; i < odds.size(); i++) {
+            int neighbourIndex = odds[i];
             // if this node is closer than the current closest, update closest and length
-            if (adjacencyMatrix[first][i] < weight) {
-                weight = adjacencyMatrix[first][i];
-                nearest = i;
+            if (adjacencyMatrix[first][neighbourIndex] < weight) {
+                weight = adjacencyMatrix[first][neighbourIndex];
+                nearest = neighbourIndex;
+                temp = i;
             }
         } 
         
-        // two nodes are matched, end of list reached
-        // FIXME: what if the edge is already existing?
-        // FIXME: maybe a vector of sets?
-        MSTMatrix[first].push_back(nearest);
-        MSTMatrix[nearest].push_back(first);
-        odds.erase(odds.begin() + nearest);
-        odds.erase(odds.begin());
+        if (nearest != INVALID_VALUE)
+        {
+            MSTMatrix[first].push_back(nearest);
+            MSTMatrix[nearest].push_back(first);
+            odds.erase(odds.begin() + temp);
+            odds.erase(odds.begin());
+        }
     }
 }
 
