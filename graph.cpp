@@ -138,12 +138,7 @@ void Graph::findMST()
         visitedIndices.push_back(nearest);
 
         updatePQ(queue, isVisited);
-
     }
-
-    std::cout << "MST Matrix:" << std::endl;
-    printMSTMatrix();
-
 }
 
 void Graph::printMSTMatrix()
@@ -272,6 +267,35 @@ void Graph::makeHamiltonian(std::vector<int> &path)
         isVisited[*it] = true;
         it += 1;
     }
+}
+
+int Graph::getPathLength(std::vector<int> path)
+{
+    int length = 0;
+    int startingVertex = path[0];
+    int vertexA, vertexB;
+
+    for(int i = 0; i < path.size() - 1; i++)
+    {
+        vertexA = path[i];
+        vertexB = path[i+1];
+        length += adjacencyMatrix[vertexA][vertexB];
+    }
+
+    length += adjacencyMatrix[vertexB][startingVertex];
+
+    return length;
+}
+
+void Graph::christofidesAlgorithm()
+{
+    findMST();
+    perfectMatching();
+    std::vector<int> path = getEulerianPath();
+    makeHamiltonian(path);
+    int length = getPathLength(path);
+
+    std::cout << "Shortest path is " << length << std::endl;
 }
 
 void Graph::printPath(std::vector<int> path)
