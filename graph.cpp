@@ -1,4 +1,6 @@
 #include <limits>
+#include <algorithm>
+#include <stack>
 #include "graph.h"
 
 const int INVALID_VALUE = -1;
@@ -146,9 +148,16 @@ void Graph::findMST()
 
 void Graph::printMSTMatrix()
 {
-    for (int i = 0; i < size; i++)
+    for(int i = 0; i < MSTMatrix.size(); i++)
     {
-        printf("Size of %d is %d\n", i, MSTMatrix[i].size());
+        std::cout << i << ": ";
+
+        for (int j = 0; j < MSTMatrix[i].size(); j++)
+        {
+            std::cout << MSTMatrix[i][j] << " ";
+        }
+        
+        std::cout << std::endl;
     }
 }
 
@@ -172,20 +181,21 @@ void Graph::perfectMatching()
     int nearest = INVALID_VALUE;
     int weight;
 
-    // Find nodes with odd degrees in T to get subgraph O
+    // Find nodes of MST with odd degrees
     std::vector<int> odds = findOddDegreeVertices();
 
-    // for each odd node
-    while (!odds.empty()) {
+    while (!odds.empty()) 
+    {
         int temp;
         int first = odds[0];
-        // std::vector<int>::iterator it;
         weight = MAX;
 
-        for (int i = 1; i < odds.size(); i++) {
+        for (int i = 1; i < odds.size(); i++) 
+        {
             int neighbourIndex = odds[i];
-            // if this node is closer than the current closest, update closest and length
-            if (adjacencyMatrix[first][neighbourIndex] < weight) {
+
+            if (adjacencyMatrix[first][neighbourIndex] < weight) 
+            {
                 weight = adjacencyMatrix[first][neighbourIndex];
                 nearest = neighbourIndex;
                 temp = i;
@@ -200,6 +210,49 @@ void Graph::perfectMatching()
             odds.erase(odds.begin());
         }
     }
+}
+
+std::vector<int> Graph::getEulerianPath()
+{
+    std::vector<int> path;
+    std::stack<int> stack;
+    
+    // We take the first element as starting vertex
+    int currVertex = 0;
+
+    while (!MSTMatrix[currVertex].empty())
+    {
+        // Add vertex to stack
+        stack.push(currVertex);
+
+        // Take the last vertex from the adjacency list
+        int lastNeighbour = MSTMatrix[currVertex].back();
+        // Remove the vertex and its neighbour from each others lists
+        MSTMatrix[currVertex].pop_back();
+        for (int i = MSTMatrix[lastNeighbour].size() - 1; i >=0; i--)
+        {
+            if (MSTMatrix[lastNeighbour][i] == currVertex)
+            {
+                MSTMatrix[lastNeighbour].erase(MSTMatrix[lastNeighbour].begin() + i);
+                break;
+            }
+        }
+
+        currVertex = lastNeighbour;
+    }
+
+    // FIXME: Why use stack? Is smth else better?
+    while (!stack.empty())
+    {
+        path.push_back(currVertex);
+        currVertex = stack.top();
+        stack.pop();
+    }
+
+    path.push_back(currVertex);
+
+
+    return path;
 }
 
 
