@@ -255,5 +255,35 @@ std::vector<int> Graph::getEulerianPath()
     return path;
 }
 
+void Graph::makeHamiltonian(std::vector<int> &path)
+{
+    int pathSize = path.size();
+    std::vector<bool> isVisited(pathSize, false);
+
+    std::vector<int>::iterator it = path.begin();
+    while (it != path.end())
+    {
+        if (isVisited[*it])
+        {
+            it = path.erase(it);
+            continue;
+        }
+
+        isVisited[*it] = true;
+        it += 1;
+    }
+
+    printPath(path);
+}
+
+void Graph::printPath(std::vector<int> path)
+{
+    for(int i = 0; i < path.size(); i++)
+    {
+        std::cout << path[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
 
 Graph::Graph(int _size, std::vector<std::vector<int>> _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
