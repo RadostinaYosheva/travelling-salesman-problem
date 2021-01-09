@@ -272,8 +272,6 @@ void Graph::makeHamiltonian(std::vector<int> &path)
         isVisited[*it] = true;
         it += 1;
     }
-
-    printPath(path);
 }
 
 void Graph::printPath(std::vector<int> path)
