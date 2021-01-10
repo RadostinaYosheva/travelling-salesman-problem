@@ -345,4 +345,33 @@ int Graph::getMSTLength(list MST)
     return result / 2;
 }
 
+void Graph::removeFromMatrix(matrix &adjMatrix, vertex index)
+{
+    adjMatrix.erase(adjMatrix.begin() + index);
+    
+    int size = adjMatrix.size();
+
+    for (int i = 0; i < size; i++)
+    {
+        adjMatrix[i].erase(adjMatrix[i].begin() + index);
+    }
+}
+
+void Graph::removeFromAdjList(list &adjList, vertex index)
+{
+    adjList[index].clear();
+
+    for(int i = 0; i < adjList.size(); i++)
+    {
+        for(int j = 0; j < adjList[i].size(); j++)
+        {
+            if (adjList[i][j] == index)
+            {
+                adjList[i].erase(adjList[i].begin() + j);
+                break;
+            }
+        }
+    }
+}
+
 Graph::Graph(int _size, matrix _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
