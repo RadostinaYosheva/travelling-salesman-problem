@@ -113,16 +113,15 @@ void Graph::addToPQ(priorityQ& queue, int key, std::vector<bool> isVisited)
     }
 }
 
-list Graph::findMST(matrix adjMatrix)
+list Graph::findMST(matrix adjMatrix, std::vector<bool> isVisited, vertex start)
 {
     int matrixSize = adjMatrix.size();
     list result(matrixSize);
-    result.resize(matrixSize);
     priorityQ queue;
     std::vector<int> visitedIndices;
-    std::vector<bool> isVisited(matrixSize, false);
-    isVisited[0] = true;
-    visitedIndices.push_back(0);
+
+    isVisited[start] = true;
+    visitedIndices.push_back(start);
 
 
     for (int i = 0; i < matrixSize-1; i++) 
@@ -307,7 +306,8 @@ int Graph::getPathLength(std::vector<int> path)
 
 void Graph::christofidesAlgorithm()
 {
-    list adjList = findMST(adjacencyMatrix);
+    std::vector<bool> isVisited(size, false);
+    list adjList = findMST(adjacencyMatrix, isVisited, 0);
     setAdjListMST(adjList);
     perfectMatching();
     std::vector<int> path = getEulerianPath();
@@ -401,5 +401,59 @@ int getCost(std::priority_queue<evPair, std::vector<evPair>, std::greater<evPair
 
     return cost;
 }
+
+void Graph::aStarAlgorithm()
+{
+    std::priority_queue< evPair, 
+                         std::vector<evPair>, 
+                         std::greater<evPair> > opened;
+    std::vector<vertex> closed;
+    matrix adjMatrix = adjacencyMatrix;
+    std::vector<bool> isVisited(size, false);
+    vertex start = 0;
+    list adjList = findMST(adjacencyMatrix, isVisited, start);
+    printMSTMatrix();
+
+    opened.push({start, 0});
+
+    while(!opened.empty())
+    {
+        evPair current = opened.top();
+        closed.push_back(current.second);
+        isVisited[current.second] = true;
+        opened.pop();
+        
+        // removeFromMatrix(adjMatrix, current.second);
+
+        if (closed.size() == size){
+            break;
+        }
+
+        std::cout << "curr.sec: " << current.second << std::endl;
+        int s = adjList[current.second].size();
+        std::cout << "adjList size: " << s << std::endl;
+        for (int i = 0; i < s; i++)
+        {
+            adjListMST = findMST(adjMatrix, isVisited, current.second);
+            printMSTMatrix();
+
+            list MST = findMST(adjMatrix, isVisited, current.second);
+            int estimator = getMSTLength(MST);
+            int weight = adjMatrix[current.second][i];
+            int cost = weight + estimator + getCost(opened, current.second);
+
+            // std::cout << "adjList[curr.sec][i]" << 
+            evPair pair;
+            pair.first = cost;
+            pair.second = adjList[current.second][i];
+            opened.push(pair);
+        }
+
+        removeFromAdjList(adjList, current.second);
+    }
+
+    std::cout << "\n\nShortest path is: " << getPathLength(closed) << std::endl;
+}
+
 
 Graph::Graph(int _size, matrix _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
