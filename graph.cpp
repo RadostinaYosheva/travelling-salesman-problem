@@ -8,7 +8,7 @@ const int MAX = std::numeric_limits<int>::max();
 
 
 
-void Graph::nearestNeighbourAlgorithm() 
+int Graph::nearestNeighbourAlgorithm() 
 {
     int shortestPath = MAX;
 
@@ -24,7 +24,7 @@ void Graph::nearestNeighbourAlgorithm()
         }
     }
 
-    std::cout << "Shortest path is " << shortestPath << " km." << std::endl;
+    return shortestPath;
 }
 
 
@@ -81,7 +81,7 @@ int Graph::findNextNeighbourIndex(int vertex, std::vector<bool> isVisited)
 
 
 
-void Graph::christofidesAlgorithm()
+int Graph::christofidesAlgorithm()
 {
     std::vector<bool> isVisited(size, false);
     // FIXME: magic numbers
@@ -90,9 +90,8 @@ void Graph::christofidesAlgorithm()
     perfectMatching();
     std::vector<int> path = getEulerianPath();
     makeHamiltonian(path);
-    int length = getPathLength(path);
 
-    std::cout << "Shortest path is " << length << std::endl;
+    return getPathLength(path);
 }
 
 
@@ -375,7 +374,7 @@ int Graph::getCost(std::priority_queue<evPair, std::vector<evPair>, std::greater
     return cost;
 }
 
-void Graph::aStarAlgorithm()
+int Graph::aStarAlgorithm()
 {
     std::priority_queue< evPair, 
                          std::vector<evPair>, 
@@ -414,7 +413,7 @@ void Graph::aStarAlgorithm()
         removeFromAdjList(adjList, current.second);
     }
 
-    std::cout << "Shortest path is " << getPathLength(closed) << std::endl;
+    return getPathLength(closed);
 }
 
 

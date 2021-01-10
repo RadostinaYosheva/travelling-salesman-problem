@@ -8,6 +8,7 @@
 
 typedef int vertex;
 typedef int edgeWeight;
+// FIXME: edgeVertexPair
 typedef std::pair<edgeWeight, vertex> evPair;
 typedef std::pair<vertex, vertex>  neighboursPair;
 typedef std::pair<edgeWeight, neighboursPair>  edgePair;
@@ -20,9 +21,11 @@ typedef std::vector<std::vector<vertex>> list;
 
 class Graph {
   public:
-    void nearestNeighbourAlgorithm();
-    void christofidesAlgorithm();
-    void aStarAlgorithm();
+  // FIXME: make algorithms namespace -> friend functions
+    // Functions returning shortest path for algorithm
+    int nearestNeighbourAlgorithm();
+    int christofidesAlgorithm();
+    int aStarAlgorithm();
     Graph(int _size, matrix _adjacencyMatrix);
 
   private:
