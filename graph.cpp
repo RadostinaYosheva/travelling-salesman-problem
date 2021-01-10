@@ -326,5 +326,23 @@ void Graph::printPath(std::vector<int> path)
     std::cout << std::endl;
 }
 
+int Graph::getMSTLength(list MST)
+{
+    int result = 0;
+
+    for (int i = 0; i < MST.size(); i++)
+    {
+        for (int j = 0; j < MST[i].size(); j++)
+        {
+            vertex A = i;
+            vertex B = MST[i][j];
+
+            result += adjacencyMatrix[A][B];
+        }
+    }
+
+    // We take every edge twice so we divide the result by 2
+    return result / 2;
+}
 
 Graph::Graph(int _size, matrix _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
