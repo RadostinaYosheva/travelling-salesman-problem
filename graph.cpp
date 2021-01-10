@@ -374,4 +374,32 @@ void Graph::removeFromAdjList(list &adjList, vertex index)
     }
 }
 
+// Updating the queue by removing the vertex with given index and returning its cost
+// We will later push the vertex with the updated cost in the queue
+int getCost(std::priority_queue<evPair, std::vector<evPair>, std::greater<evPair> > &queue, vertex index)
+{
+    std::priority_queue<evPair, std::vector<evPair>, std::greater<evPair> > temp;
+    int cost = 0;
+
+    while (!queue.empty())
+    {
+        if(queue.top().second == index)
+        {
+            cost = queue.top().first;
+            queue.pop();
+            continue;
+        }
+
+        temp.push(queue.top());
+        queue.pop();
+    }
+
+    if (!temp.empty())
+    {
+        queue = temp;
+    }
+
+    return cost;
+}
+
 Graph::Graph(int _size, matrix _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
