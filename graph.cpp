@@ -8,7 +8,8 @@ const int MAX = std::numeric_limits<int>::max();
 
 
 
-void Graph::nearestNeighbourAlgorithm() {
+void Graph::nearestNeighbourAlgorithm() 
+{
     int shortestPath = MAX;
 
     // We can use for loop because we have to visit all cities
@@ -28,7 +29,8 @@ void Graph::nearestNeighbourAlgorithm() {
 
 
 /* (NN) Finding the shortest path from a given city */
-int Graph::findShortestPath(int startVertex) {
+int Graph::findShortestPath(int startVertex) 
+{
     int currentVertex = startVertex;
     int shortest = 0;
     std::vector<bool> isVisited(size, false);
@@ -111,17 +113,19 @@ void Graph::addToPQ(priorityQ& queue, int key, std::vector<bool> isVisited)
     }
 }
 
-void Graph::findMST()
+list Graph::findMST(matrix adjMatrix)
 {
-    MSTMatrix.resize(size);
+    int matrixSize = adjMatrix.size();
+    list result(matrixSize);
+    result.resize(matrixSize);
     priorityQ queue;
     std::vector<int> visitedIndices;
-    std::vector<bool> isVisited(size, false);
+    std::vector<bool> isVisited(matrixSize, false);
     isVisited[0] = true;
     visitedIndices.push_back(0);
 
 
-    for (int i = 0; i < size-1; i++) 
+    for (int i = 0; i < matrixSize-1; i++) 
     {
         for(int v : visitedIndices)
         {
@@ -132,24 +136,38 @@ void Graph::findMST()
         int nearest = queue.top().second.second;
         int weight = queue.top().first;
 
-        MSTMatrix[keyCity].push_back(nearest);
-        MSTMatrix[nearest].push_back(keyCity);
+        result[keyCity].push_back(nearest);
+        result[nearest].push_back(keyCity);
         isVisited[nearest] = true;
         visitedIndices.push_back(nearest);
 
         updatePQ(queue, isVisited);
     }
+
+    return result;
+}
+
+void Graph::setAdjListMST(list listMST)
+{
+    adjListMST.resize(listMST.size());
+    for (int i = 0; i < listMST.size(); i++)
+    {
+        for (int j = 0; j < listMST[i].size(); j++)
+        {
+            adjListMST[i].push_back(listMST[i][j]);
+        }
+    }
 }
 
 void Graph::printMSTMatrix()
 {
-    for(int i = 0; i < MSTMatrix.size(); i++)
+    for(int i = 0; i < adjListMST.size(); i++)
     {
         std::cout << i << ": ";
 
-        for (int j = 0; j < MSTMatrix[i].size(); j++)
+        for (int j = 0; j < adjListMST[i].size(); j++)
         {
-            std::cout << MSTMatrix[i][j] << " ";
+            std::cout << adjListMST[i][j] << " ";
         }
         
         std::cout << std::endl;
@@ -162,7 +180,7 @@ std::vector<int> Graph::findOddDegreeVertices()
     
     for(int i = 0; i < size; i++)
     {
-        if (MSTMatrix[i].size() % 2 != 0)
+        if (adjListMST[i].size() % 2 != 0)
         {
             odds.push_back(i);
         }
@@ -199,8 +217,8 @@ void Graph::perfectMatching()
         
         if (nearest != INVALID_VALUE)
         {
-            MSTMatrix[first].push_back(nearest);
-            MSTMatrix[nearest].push_back(first);
+            adjListMST[first].push_back(nearest);
+            adjListMST[nearest].push_back(first);
             odds.erase(odds.begin() + temp);
             odds.erase(odds.begin());
         }
@@ -215,20 +233,20 @@ std::vector<int> Graph::getEulerianPath()
     // We take the first element as starting vertex
     int currVertex = 0;
 
-    while (!MSTMatrix[currVertex].empty())
+    while (!adjListMST[currVertex].empty())
     {
         // Add vertex to stack
         stack.push(currVertex);
 
         // Take the last vertex from the adjacency list
-        int lastNeighbour = MSTMatrix[currVertex].back();
+        int lastNeighbour = adjListMST[currVertex].back();
         // Remove the vertex and its neighbour from each others lists
-        MSTMatrix[currVertex].pop_back();
-        for (int i = MSTMatrix[lastNeighbour].size() - 1; i >=0; i--)
+        adjListMST[currVertex].pop_back();
+        for (int i = adjListMST[lastNeighbour].size() - 1; i >=0; i--)
         {
-            if (MSTMatrix[lastNeighbour][i] == currVertex)
+            if (adjListMST[lastNeighbour][i] == currVertex)
             {
-                MSTMatrix[lastNeighbour].erase(MSTMatrix[lastNeighbour].begin() + i);
+                adjListMST[lastNeighbour].erase(adjListMST[lastNeighbour].begin() + i);
                 break;
             }
         }
@@ -289,7 +307,8 @@ int Graph::getPathLength(std::vector<int> path)
 
 void Graph::christofidesAlgorithm()
 {
-    findMST();
+    list adjList = findMST(adjacencyMatrix);
+    setAdjListMST(adjList);
     perfectMatching();
     std::vector<int> path = getEulerianPath();
     makeHamiltonian(path);
@@ -308,4 +327,4 @@ void Graph::printPath(std::vector<int> path)
 }
 
 
-Graph::Graph(int _size, std::vector<std::vector<int>> _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
+Graph::Graph(int _size, matrix _adjacencyMatrix) : size{_size}, adjacencyMatrix{_adjacencyMatrix} {}
