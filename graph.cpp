@@ -15,7 +15,7 @@ int Graph::nearestNeighbourAlgorithm()
     // We can use for loop because we have to visit all cities
     for (int i = 0; i < size; i++) 
     {
-        int startingPoint = i;
+        vertex startingPoint = i;
         int currentPath = findShortestPath(startingPoint);
 
         if (currentPath < shortestPath)
@@ -29,7 +29,7 @@ int Graph::nearestNeighbourAlgorithm()
 
 
 /* Finding the shortest path from a given city */
-int Graph::findShortestPath(int startVertex) 
+int Graph::findShortestPath(vertex startVertex) 
 {
     int currentVertex = startVertex;
     int shortest = 0;
@@ -39,7 +39,7 @@ int Graph::findShortestPath(int startVertex)
 
     for(int i = 0; i < size; i++) 
     {
-        int nearestNeighbour = findNextNeighbourIndex(currentVertex, isVisited);
+        vertex nearestNeighbour = findNextNeighbourIndex(currentVertex, isVisited);
 
         if (nearestNeighbour == INVALID_VALUE) {
             shortest += adjacencyMatrix[startVertex][currentVertex];
@@ -56,22 +56,22 @@ int Graph::findShortestPath(int startVertex)
 
 
 /* Find the index of the nearest neighbour*/
-int Graph::findNextNeighbourIndex(int vertex, std::vector<bool> isVisited) 
+vertex Graph::findNextNeighbourIndex(vertex current, std::vector<bool> isVisited) 
 {
     int min = MAX;
-    int minIndex = INVALID_VALUE;
+    vertex minIndex = INVALID_VALUE;
 
     for (int i = 0; i < size; i++)
     {
-        if (isVisited[i] || i == vertex)
+        if (isVisited[i] || i == current)
         {
             continue;
         }
 
         // It doesn't matter if @vertex is first or second because the matrix is symmetric
-        if (min > adjacencyMatrix[vertex][i])
+        if (min > adjacencyMatrix[current][i])
         {
-            min = adjacencyMatrix[vertex][i];
+            min = adjacencyMatrix[current][i];
             minIndex = i;
         }
     }
@@ -88,7 +88,7 @@ int Graph::christofidesAlgorithm()
     list adjList = findMST(adjacencyMatrix, isVisited, 0, 1);
     setAdjListMST(adjList);
     perfectMatching();
-    std::vector<int> path = getEulerianPath();
+    std::vector<vertex> path = getEulerianPath();
     makeHamiltonian(path);
 
     return getPathLength(path);
@@ -102,7 +102,7 @@ void Graph::updatePQ(priorityQ& oldPQ, std::vector<bool> isVisited)
 
     while (!oldPQ.empty())
     {
-        int neighbourIndex = oldPQ.top().second.first;
+        vertex neighbourIndex = oldPQ.top().second.first;
 
         if (!isVisited[neighbourIndex])
         {
@@ -116,7 +116,7 @@ void Graph::updatePQ(priorityQ& oldPQ, std::vector<bool> isVisited)
 }
 
 /* Adds all unvisited edges of given vertex to priority queue */
-void Graph::addToPQ(priorityQ& queue, int key, std::vector<bool> isVisited)
+void Graph::addToPQ(priorityQ& queue, vertex key, std::vector<bool> isVisited)
 {
     for (int i = 0; i < size; i++)
     {
@@ -125,7 +125,7 @@ void Graph::addToPQ(priorityQ& queue, int key, std::vector<bool> isVisited)
             continue;
         }
 
-        int weight = adjacencyMatrix[key][i];
+        edgeWeight weight = adjacencyMatrix[key][i];
         queue.push({weight, {key, i}});
     }
 }
@@ -142,18 +142,18 @@ list Graph::findMST(matrix adjMatrix, std::vector<bool> isVisited, vertex start,
     visitedIndices.push_back(start);
 
 
-    // Why i < this ??
+    // We are searching for MST for the unvisited vertices
     for (int i = 0; i < matrixSize-numVisited; i++) 
     {
-        for(int v : visitedIndices)
+        for(vertex v : visitedIndices)
         {
             // Adding v's edges to priority queue
             addToPQ(queue, v, isVisited);
         }
 
-        int keyVertex = queue.top().second.first;
-        int nearest = queue.top().second.second;
-        int weight = queue.top().first;
+        vertex keyVertex = queue.top().second.first;
+        vertex nearest = queue.top().second.second;
+        edgeWeight weight = queue.top().first;
 
         // add shortest edge to MST
         result[keyVertex].push_back(nearest);
@@ -170,9 +170,9 @@ list Graph::findMST(matrix adjMatrix, std::vector<bool> isVisited, vertex start,
     return result;
 }
 
-std::vector<int> Graph::findOddDegreeVertices()
+std::vector<vertex> Graph::findOddDegreeVertices()
 {
-    std::vector<int> odds;
+    std::vector<vertex> odds;
     
     for(int i = 0; i < size; i++)
     {
@@ -188,21 +188,21 @@ std::vector<int> Graph::findOddDegreeVertices()
 /* Matches all the vertices with odd degree */
 void Graph::perfectMatching() 
 {
-    int nearest = INVALID_VALUE;
-    int weight;
+    vertex nearest = INVALID_VALUE;
+    edgeWeight weight;
 
     // Find nodes of MST with odd degrees
-    std::vector<int> odds = findOddDegreeVertices();
+    std::vector<vertex> odds = findOddDegreeVertices();
 
     while (!odds.empty()) 
     {
         int temp;
-        int first = odds[0];
+        vertex first = odds[0];
         weight = MAX;
 
         for (int i = 1; i < odds.size(); i++) 
         {
-            int neighbourIndex = odds[i];
+            vertex neighbourIndex = odds[i];
 
             if (adjacencyMatrix[first][neighbourIndex] < weight) 
             {
@@ -224,13 +224,13 @@ void Graph::perfectMatching()
 
 
 /* Finds the path where every edge of the MST is visited */
-std::vector<int> Graph::getEulerianPath()
+std::vector<vertex> Graph::getEulerianPath()
 {
-    std::vector<int> path;
-    std::stack<int> stack;
+    std::vector<vertex> path;
+    std::stack<vertex> stack;
     
     // We take the first element as starting vertex
-    int currVertex = 0;
+    vertex currVertex = 0;
 
     while (!adjListMST[currVertex].empty())
     {
@@ -238,7 +238,7 @@ std::vector<int> Graph::getEulerianPath()
         stack.push(currVertex);
 
         // Take the last vertex from the adjacency list
-        int lastNeighbour = adjListMST[currVertex].back();
+        vertex lastNeighbour = adjListMST[currVertex].back();
         // Remove the vertex and its neighbour from each others lists
         adjListMST[currVertex].pop_back();
         for (int i = adjListMST[lastNeighbour].size() - 1; i >=0; i--)
@@ -253,7 +253,8 @@ std::vector<int> Graph::getEulerianPath()
         currVertex = lastNeighbour;
     }
 
-    // FIXME: Why use stack? Is smth else better? -> vector because the order of the cities in the path does not matter
+    // Using stack because we look for a path from the back of the vectors
+    // (and for some color)
     while (!stack.empty())
     {
         path.push_back(currVertex);
@@ -269,12 +270,12 @@ std::vector<int> Graph::getEulerianPath()
 
 
 /* Takes shortcuts in path (Removes repeating vertices) */
-void Graph::makeHamiltonian(std::vector<int> &path)
+void Graph::makeHamiltonian(std::vector<vertex> &path)
 {
     int pathSize = path.size();
     std::vector<bool> isVisited(pathSize, false);
 
-    std::vector<int>::iterator it = path.begin();
+    std::vector<vertex>::iterator it = path.begin();
     while (it != path.end())
     {
         if (isVisited[*it])
@@ -289,20 +290,20 @@ void Graph::makeHamiltonian(std::vector<int> &path)
 }
 
 
-int Graph::getPathLength(std::vector<int> path)
+int Graph::getPathLength(std::vector<vertex> path)
 {
     int length = 0;
-    int startingVertex = path[0];
-    int vertexA, vertexB;
+    vertex start = path[0];
+    vertex first, second;
 
     for(int i = 0; i < path.size() - 1; i++)
     {
-        vertexA = path[i];
-        vertexB = path[i+1];
-        length += adjacencyMatrix[vertexA][vertexB];
+        first = path[i];
+        second = path[i+1];
+        length += adjacencyMatrix[first][second];
     }
 
-    length += adjacencyMatrix[vertexB][startingVertex];
+    length += adjacencyMatrix[second][start];
 
     return length;
 }
@@ -316,14 +317,15 @@ int Graph::getMSTLength(list MST)
     {
         for (int j = 0; j < MST[i].size(); j++)
         {
-            vertex A = i;
-            vertex B = MST[i][j];
+            vertex first = i;
+            vertex second = MST[i][j];
 
-            result += adjacencyMatrix[A][B];
+            result += adjacencyMatrix[first][second];
         }
     }
 
-    // We take every edge twice so we divide the result by 2
+    // We take every edge twice 
+    // so we divide the result by 2
     return result / 2;
 }
 
@@ -348,9 +350,9 @@ void Graph::removeFromAdjList(list &adjList, vertex index)
 
 // Updating the queue by removing the vertex with given index and returning its cost
 // We will later push the vertex with the updated cost in the queue
-int Graph::getCost(std::priority_queue<evPair, std::vector<evPair>, std::greater<evPair> > &queue, vertex index)
+int Graph::getCost(std::priority_queue<edgeVertexPair, std::vector<edgeVertexPair>, std::greater<edgeVertexPair> > &queue, vertex index)
 {
-    std::priority_queue<evPair, std::vector<evPair>, std::greater<evPair> > temp;
+    std::priority_queue<edgeVertexPair, std::vector<edgeVertexPair>, std::greater<edgeVertexPair> > temp;
     int cost = 0;
 
     while (!queue.empty())
@@ -376,9 +378,9 @@ int Graph::getCost(std::priority_queue<evPair, std::vector<evPair>, std::greater
 
 int Graph::aStarAlgorithm()
 {
-    std::priority_queue< evPair, 
-                         std::vector<evPair>, 
-                         std::greater<evPair> > opened;
+    std::priority_queue< edgeVertexPair, 
+                         std::vector<edgeVertexPair>, 
+                         std::greater<edgeVertexPair> > opened;
     std::vector<vertex> closed;
     std::vector<bool> isVisited(size, false);
     vertex start = 0;
@@ -390,7 +392,7 @@ int Graph::aStarAlgorithm()
 
     while(!opened.empty())
     {
-        evPair current = opened.top();
+        edgeVertexPair current = opened.top();
         closed.push_back(current.second);
         isVisited[current.second] = true;
         numVisited++;

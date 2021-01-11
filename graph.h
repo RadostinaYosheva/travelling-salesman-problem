@@ -8,8 +8,7 @@
 
 typedef int vertex;
 typedef int edgeWeight;
-// FIXME: edgeVertexPair
-typedef std::pair<edgeWeight, vertex> evPair;
+typedef std::pair<edgeWeight, vertex> edgeVertexPair;
 typedef std::pair<vertex, vertex>  neighboursPair;
 typedef std::pair<edgeWeight, neighboursPair>  edgePair;
 typedef std::priority_queue< edgePair, 
@@ -36,27 +35,27 @@ class Graph {
     void setAdjListMST(list adjListMST);
     list findMST(matrix currAdjMatrix, 
                  std::vector<bool> isVisited, 
-                 vertex start, int numVisited);                                 /* Function that returns a MinimumSpanningTree of a graph */
-    int getPathLength(std::vector<int> path);
+                 vertex start, int numVisited);                                     /* Returns an adjacency list of MinimumSpanningTree of a graph */
+    int getPathLength(std::vector<vertex> path);
 
     // Functions used in Nearest Neighbour Algorithm
-    int findShortestPath(int startVertex);                                      /* Finds the shortest path from a given vertex */
-    int findNextNeighbourIndex(int vertex, std::vector<bool> visited);          /* Finds the index of the nearest neighbour */
+    int findShortestPath(vertex startVertex);                                       /* Finds the shortest path from a given vertex */
+    vertex findNextNeighbourIndex(vertex vertex, std::vector<bool> visited);        /* Finds the index of the nearest neighbour */
 
     // Functions used in Christofides' Algorithm
-    void addToPQ(priorityQ& queue, int key, std::vector<bool> isVisited);       /* Adds all unvisited edges of given vertex to priority queue */
-    void updatePQ(priorityQ& oldPQ, std::vector<bool> isVisited);               /* Removes all edges where second vertex is the last visited vertex */
-    std::vector<int> findOddDegreeVertices();                                   /* Finds all the vertices with odd degree */
-    void perfectMatching();                                                     /* Matches all the vertices with odd degree */
-    std::vector<int> getEulerianPath();                                         /* Finds the path where every edge of the MST is visited */
-    void makeHamiltonian(std::vector<int> &path);                               /* Takes shortcuts in path (Removes repeating vertices) */
+    void addToPQ(priorityQ& queue, vertex key, std::vector<bool> isVisited);        /* Adds all unvisited edges of given vertex to priority queue */
+    void updatePQ(priorityQ& oldPQ, std::vector<bool> isVisited);                   /* Removes all edges where second vertex is the last visited vertex */
+    std::vector<vertex> findOddDegreeVertices();                                    /* Finds all the vertices with odd degree */
+    void perfectMatching();                                                         /* Matches all the vertices with odd degree */
+    std::vector<vertex> getEulerianPath();                                          /* Finds the path where every edge of the MST is visited */
+    void makeHamiltonian(std::vector<vertex> &path);                                /* Takes shortcuts in path (Removes repeating vertices) */
     
     // Functions used in A* Algorithm
     int getMSTLength(list MST);
-    void removeFromAdjList(list &adjList, vertex index);                        /* Removes vertex from adjacency list */
-    int getCost(std::priority_queue<evPair, 
-                std::vector<evPair>, 
-                std::greater<evPair> > &queue, vertex index);                   /* Removes a vertex and returns its cost */
+    void removeFromAdjList(list &adjList, vertex index);                            /* Removes vertex from adjacency list */
+    edgeWeight getCost(std::priority_queue<edgeVertexPair, 
+                std::vector<edgeVertexPair>, 
+                std::greater<edgeVertexPair> > &queue, vertex index);               /* Removes a vertex and returns its cost */
 };
 
 #endif
