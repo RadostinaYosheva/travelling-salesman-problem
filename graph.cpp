@@ -29,25 +29,25 @@ int Graph::nearestNeighbourAlgorithm()
 
 
 /* Finding the shortest path from a given city */
-int Graph::findShortestPath(vertex startVertex) 
+int Graph::findShortestPath(vertex start) 
 {
-    int currentVertex = startVertex;
+    int current = start;
     int shortest = 0;
     std::vector<bool> isVisited(size, false);
-    isVisited[startVertex] = true;
+    isVisited[start] = true;
 
 
     for(int i = 0; i < size; i++) 
     {
-        vertex nearestNeighbour = findNextNeighbourIndex(currentVertex, isVisited);
+        vertex nearestNeighbour = findNextNeighbourIndex(current, isVisited);
 
         if (nearestNeighbour == INVALID_VALUE) {
-            shortest += adjacencyMatrix[startVertex][currentVertex];
+            shortest += adjacencyMatrix[start][current];
             break;
         }
 
-        shortest += adjacencyMatrix[currentVertex][nearestNeighbour];
-        currentVertex = nearestNeighbour;
+        shortest += adjacencyMatrix[current][nearestNeighbour];
+        current = nearestNeighbour;
         isVisited[nearestNeighbour] = true;
     }
 
@@ -83,9 +83,11 @@ vertex Graph::findNextNeighbourIndex(vertex current, std::vector<bool> isVisited
 
 int Graph::christofidesAlgorithm()
 {
+    vertex start = 0;
     std::vector<bool> isVisited(size, false);
+    isVisited[start] = true;
     // FIXME: magic numbers
-    list adjList = findMST(adjacencyMatrix, isVisited, 0, 1);
+    list adjList = findMST(adjacencyMatrix, isVisited, start, 1);
     setAdjListMST(adjList);
     perfectMatching();
     std::vector<vertex> path = getEulerianPath();
