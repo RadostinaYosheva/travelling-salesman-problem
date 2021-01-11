@@ -17,6 +17,7 @@ class Engine
     Graph init(std::string fileName);
     // TODO: try with passing a function (std::function)
     void timerTest(Graph g, int algorithm);
+    long getMemoryUsage();
 };
 
 #endif

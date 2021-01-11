@@ -1,6 +1,8 @@
 #include "engine.h"
 #include "timer.h"
 #include <fstream>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 void Engine::run()
 {
@@ -86,6 +88,15 @@ Graph Engine::init(std::string fileName)
     return graph;
 }
 
+long Engine::getMemoryUsage()
+{
+    struct rusage myUsage;
+
+    getrusage(RUSAGE_SELF, &myUsage);
+
+    return myUsage.ru_maxrss;
+}
+
 void Engine::timerTest(Graph g, int algorithm) {
     const int testRepeat = 1 << 10;
 
@@ -93,6 +104,7 @@ void Engine::timerTest(Graph g, int algorithm) {
 	uint64_t t1;
 
     int shortestPath;
+    long memory;
 
 	{
 		t0 = timer_nsec();
@@ -101,13 +113,16 @@ void Engine::timerTest(Graph g, int algorithm) {
             {
             case 1:
                 shortestPath = g.nearestNeighbourAlgorithm();
+                memory = getMemoryUsage();
                 break;
             case 2:
                 shortestPath = g.christofidesAlgorithm();
+                memory = getMemoryUsage();
                 break;
 
             case 3:
                 shortestPath = g.aStarAlgorithm();
+                memory = getMemoryUsage();
                 break;
 
             default:
@@ -118,8 +133,9 @@ void Engine::timerTest(Graph g, int algorithm) {
 	}
 
     const double averageTime = (double(t1 - t0) * 1e-9) / testRepeat;
-    printf("Shortest path: %d\n", shortestPath);
+    printf("\nShortest path: %d\n", shortestPath);
 	printf("Time: %f\n", averageTime);
+    printf("Memory: %ld\n", memory);
 }
 
 Engine::Engine() {}
