@@ -15,7 +15,6 @@ class Engine
     int chooseTestCases();
     std::string generateTestCase(int choice);
     Graph init(std::string fileName);
-    // TODO: try with passing a function (std::function)
     void timerTest(Graph g, int algorithm);
     long getMemoryUsage();
 };
