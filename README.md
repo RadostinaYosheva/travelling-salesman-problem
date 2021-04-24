@@ -12,7 +12,7 @@ Given a collection of vertices connected by edges and the weight of every edge, 
 ## Used Algorithms
 1. __Nearest Neighbour__
 The salesman starts at a random city and repeatedly visits the nearest city until all have been visited. The algorithm quickly yields a short tour, but usually not the optimal one.<br/>
-Worst case performance: Θ(n<sub>2</sub>)
+Worst case performance: Θ(n<sup>2</sup>)
 
 2. __Chrisofides' Algorithm__
 This is an algorithm for finding an approximate solution to the problem using Minimum Spanning Tree, using the Prim's algorithm, finding the perfect matching of the tree and getting the Euler's path for shortcuts.
