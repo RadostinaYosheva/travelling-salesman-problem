@@ -1,4 +1,7 @@
 # Travelling Salesman Problem
+
+---
+
 A university assignment to implement at least two heuristic algoritms to solve the TSP.
 By Radostina Yosheva, Computer Science strudent at FMI, Sofia Univercity "St. Kliment Ohridski".
 This project has a short comparitive analysis in bulgarian.
@@ -22,5 +25,11 @@ Worst case performance: $$O(|E|)$$
 Since the assignement was for Data Structures and Programming course, the OOP structure was not regarded. The architecture should be fixed and tests and documentation should be added.
 There won't be any further realizations of the project because it is only implementations of already existing algorithms.
 
-##### Technology Stack
+## To run the project:
+- Write the command ```make``` and then ```./output```.
+- From the menu chose an algorithm and enter its number.
+- Chose a test and enter its number of enter 6 to change the angorithm.
+- To exit press any key.
+
+### Technology Stack
 The project is written in C++ with Visual Studio Code as IDE.
